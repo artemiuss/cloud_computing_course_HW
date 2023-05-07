@@ -65,7 +65,8 @@ Total: 3 (HIGH: 1, CRITICAL: 2)
 
 ### Scan with grype
 ```
-grype --only-fixed docker:ghcr.io/mlflow/mlflow:v2.3.0 | grep -v "(suppressed)" | sed 's/[[:space:]]*$//' | grep "High$\|Critical$"```
+grype --only-fixed docker:ghcr.io/mlflow/mlflow:v2.3.0 | grep -v "(suppressed)" | sed 's/[[:space:]]*$//' | grep "High$\|Critical$"
+```
 
 Scan results:
 ```
