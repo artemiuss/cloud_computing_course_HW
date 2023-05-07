@@ -6,7 +6,7 @@ Scan image `ghcr.io/mlflow/mlflow:v2.3.0` with [grype](https://github.com/anchor
 
 ## Deliveries
 
-### Scane with trivy
+### Scan with trivy
 ```
 trivy --severity HIGH,CRITICAL image --ignore-unfixed ghcr.io/mlflow/mlflow:v2.3.0
 ```
@@ -63,7 +63,7 @@ Total: 3 (HIGH: 1, CRITICAL: 2)
 └───────────────────┴─────────────────────┴──────────┴───────────────────┴───────────────┴─────────────────────────────────────────────────────────────┘
 ```
 
-### Scane with grype
+### Scan with grype
 ```
 grype --fail-on critical --only-fixed docker:ghcr.io/mlflow/mlflow:v2.3.0 | grep -v "(suppressed)"
 ```
