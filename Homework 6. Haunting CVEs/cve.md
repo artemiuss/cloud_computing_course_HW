@@ -65,8 +65,7 @@ Total: 3 (HIGH: 1, CRITICAL: 2)
 
 ### Scan with grype
 ```
-grype --fail-on critical --only-fixed docker:ghcr.io/mlflow/mlflow:v2.3.0 | grep -v "(suppressed)"
-```
+grype --only-fixed docker:ghcr.io/mlflow/mlflow:v2.3.0 | grep -v "(suppressed)" | sed 's/[[:space:]]*$//' | grep "High$\|Critical$"```
 
 Scan results:
 ```
@@ -77,21 +76,13 @@ Scan results:
  ✔ Scanning image...       [112 vulnerabilities]
    ├── 3 critical, 26 high, 15 medium, 8 low, 59 negligible (1 unknown)
    └── 12 fixed
-NAME              INSTALLED           FIXED-IN                TYPE    VULNERABILITY        SEVERITY
 Flask             2.2.3               2.2.5                   python  GHSA-m2qf-hxjv-5gpq  High
-certifi           2022.12.7           2022.12.07              python  GHSA-43fp-rhv2-5gv8  Medium
 libncursesw6      6.2+20201114-2      6.2+20201114-2+deb11u1  deb     CVE-2022-29458       High
-libsystemd0       247.3-7+deb11u1     247.3-7+deb11u2         deb     CVE-2022-3821        Medium
-libsystemd0       247.3-7+deb11u1     247.3-7+deb11u2         deb     CVE-2022-4415        Medium
 libtinfo6         6.2+20201114-2      6.2+20201114-2+deb11u1  deb     CVE-2022-29458       High
-libudev1          247.3-7+deb11u1     247.3-7+deb11u2         deb     CVE-2022-3821        Medium
-libudev1          247.3-7+deb11u1     247.3-7+deb11u2         deb     CVE-2022-4415        Medium
 mlflow            2.3.0               2.3.1                   python  GHSA-83fm-w79m-64r5  Critical
 mlflow            2.3.0               2.3.1                   python  GHSA-x422-6qhv-p29g  Critical
 ncurses-base      6.2+20201114-2      6.2+20201114-2+deb11u1  deb     CVE-2022-29458       High
 ncurses-bin       6.2+20201114-2      6.2+20201114-2+deb11u1  deb     CVE-2022-29458       High
-1 error occurred:
-        * discovered vulnerabilities at or above the severity threshold
 ```
 
 
