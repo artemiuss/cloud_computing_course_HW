@@ -51,6 +51,8 @@ resource "aws_lambda_function" "store_event" {
   timeout          = 5
   role             = aws_iam_role.aws_lambda_store_event_role.arn
 
+  layers = [aws_lambda_layer_version.lambda_psycopg2_layer.arn]
+
   environment {
     variables = {
       S3_BUCKET = var.s3_bucket
@@ -61,6 +63,17 @@ resource "aws_lambda_function" "store_event" {
       SECRET_NAME = aws_secretsmanager_secret.password.rds_secret.name
     }
   }
+}
+
+resource "aws_lambda_layer_version" "lambda_psycopg2_layer" {
+  filename   = data.archive_file.lambda_psycopg2_layer_archive.output_path
+  layer_name = "lambda_psycopg2_layer"
+}
+
+data "archive_file" "lambda_psycopg2_layer_archive" {
+  type        = "zip"
+  source_dir  = "layers/psycopg2"
+  output_path = "lambda-python-psycopg2-layer.zip"
 }
 
 resource "random_password" "db_password"{

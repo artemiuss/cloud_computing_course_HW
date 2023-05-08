@@ -18,15 +18,15 @@ def lambda_handler(event, context):
 
     secret = parameters.get_secret(secret_name)
 
-    s3 = boto3.resource('s3')
+    s3_client = boto3.client('s3')
 
-    conn= psycopg2.connect(user=secret["username"], password=secret["password"], host=secret["host"], port=int(secret["port"]), database=secret["dbname"])
+    conn = psycopg2.connect(user=secret["username"], password=secret["password"], host=secret["host"], port=int(secret["port"]), database=secret["dbname"])
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY, event json NOT NULL, ts timestamp);")
 
     #for record in event['Records']:
     
-        #s3_object = s3.put_object(Bucket= s3_bucket, Key=(uuid.uuid4()) + '.json', Body=event['body'])
+        #s3_object = s3_client.put_object(Bucket= s3_bucket, Key=(uuid.uuid4()) + '.json', Body=event['body'])
 
         #r = json.loads(base64.b64decode(record['kinesis']['data']).decode('utf-8'))
         #cur.execute("INSERT INTO events (id, text, date) VALUES (%s, %s, DATE %s)",
