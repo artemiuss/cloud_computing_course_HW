@@ -1,7 +1,7 @@
 import os
 import logging
 import boto3
-import uuid
+import json
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -14,9 +14,9 @@ def lambda_handler(event, context):
     kinesis_client = boto3.client('kinesis')
 
     response = kinesis_client.put_record(
-        StreamName=kinesis_stream,
-        Data=event['body'],
-        PartitionKey=uuid.uuid4())
+        StreamName = kinesis_stream,
+        Data = json.dumps(event),
+        PartitionKey = str(event['requestContext']['requestId']))
 
     return {
         'statusCode': 200,

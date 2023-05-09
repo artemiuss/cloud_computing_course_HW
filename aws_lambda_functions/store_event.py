@@ -4,7 +4,6 @@ import logging
 import base64
 import psycopg2
 import boto3
-import uuid
 from aws_lambda_powertools.utilities import parameters
 
 logger = logging.getLogger()
@@ -22,17 +21,17 @@ def lambda_handler(event, context):
 
     conn = psycopg2.connect(user=secret["username"], password=secret["password"], host=secret["host"], port=int(secret["port"]), database=secret["dbname"])
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY, event json NOT NULL, ts timestamp);")
+    cur.execute("CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY, event JSON NOT NULL, ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
-    #for record in event['Records']:
-    
-        #s3_object = s3_client.put_object(Bucket= s3_bucket, Key=(uuid.uuid4()) + '.json', Body=event['body'])
 
-        #r = json.loads(base64.b64decode(record['kinesis']['data']).decode('utf-8'))
-        #cur.execute("INSERT INTO events (id, text, date) VALUES (%s, %s, DATE %s)",
-        #            (r['id'], r['text'], parse(r['date'])))
+    for record in event['Records']:
+        payload = base64.b64decode(record["kinesis"]["data"]).decode("utf-8")
+        payload_json = json.loads(payload)
+        requestId = payload_json['requestContext']['requestId']
 
-        #cur.execute("INSERT INTO events (event, ts) VALUES (%s, %s)", (record['body'], record['attributes']['SentTimestamp']))
+        s3_client.put_object(Bucket= s3_bucket, Key=requestId + '.json', Body=payload_json)
+
+        cur.execute("INSERT INTO events (event, ts) VALUES (%s)", (payload_json))
 
     conn.commit()
     cur.close()
