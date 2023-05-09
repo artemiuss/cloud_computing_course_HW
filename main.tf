@@ -191,7 +191,6 @@ resource "aws_db_instance" "pg_db" {
 #
 # IAM
 #
-
 resource "aws_iam_role" "function_role" {
   name = "${local.function_name}-${var.env_name}"
 
