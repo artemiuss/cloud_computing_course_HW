@@ -30,7 +30,7 @@ data "archive_file" "store_event" {
 }
 
 resource "aws_lambda_function" "ingest_event" {
-  filename         = "ingest_event.zip"
+  filename         = "aws_lambda_functions/ingest_event.zip"
   function_name    = "ingest_event"
   source_code_hash = data.archive_file.ingest_event.output_base64sha256
   handler          = "ingest_event.lambda_handler"
@@ -46,7 +46,7 @@ resource "aws_lambda_function" "ingest_event" {
 }
 
 resource "aws_lambda_function" "store_event" {
-  filename         = "store_event.zip"
+  filename         = "aws_lambda_functions/store_event.zip"
   function_name    = "store_event"
   source_code_hash = data.archive_file.store_event.output_base64sha256
   handler          = "store_event.lambda_handler"
@@ -238,6 +238,7 @@ resource "aws_iam_role" "lambda_role" {
   name = "lambda-vpc-execution-role"
 
   assume_role_policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [
       {
         Action = "sts:AssumeRole"
@@ -259,6 +260,7 @@ resource "aws_iam_policy" "lambda_policy" {
   name = "lambda_policy"
 
   policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [
       {
         Effect = "Allow"
