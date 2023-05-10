@@ -31,6 +31,7 @@ Since the ingestion function URL uses the AWS_IAM auth type, you must sign each 
     
     awscurl --service lambda --region <aws_region variable value from the variables.tf file> "<lambda_function_url from the terraform output>"
     ```
+
 2. Check AWS S3 bucket for new file
 3. Check AWS RDS database for new record
 

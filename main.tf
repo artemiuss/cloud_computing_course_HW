@@ -35,7 +35,7 @@ resource "aws_lambda_function" "ingest_event" {
   source_code_hash = data.archive_file.ingest_event.output_base64sha256
   handler          = "ingest_event.lambda_handler"
   runtime          = "python3.9"
-  timeout          = 20
+  timeout          = 5
   role             = aws_iam_role.lambda_role.arn
 
   environment {
@@ -51,12 +51,11 @@ resource "aws_lambda_function" "store_event" {
   source_code_hash = data.archive_file.store_event.output_base64sha256
   handler          = "store_event.lambda_handler"
   runtime          = "python3.9"
-  timeout          = 50
+  timeout          = 10
   role             = aws_iam_role.lambda_role.arn
 
   layers = [
-    aws_lambda_layer_version.lambda_psycopg2_layer.arn,
-    "arn:aws:lambda:${var.aws_region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:32"
+    aws_lambda_layer_version.lambda_psycopg2_layer.arn
   ]
 
   environment {
