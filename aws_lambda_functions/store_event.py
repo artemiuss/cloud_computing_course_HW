@@ -23,7 +23,6 @@ def lambda_handler(event, context):
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY, event JSON NOT NULL, ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
-
     for record in event['Records']:
         payload = base64.b64decode(record["kinesis"]["data"]).decode("utf-8")
         payload_json = json.loads(payload)
