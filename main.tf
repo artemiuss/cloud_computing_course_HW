@@ -128,7 +128,7 @@ resource "aws_lambda_event_source_mapping" "kinesis_to_s3_mapping" {
 # S3
 #
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket_prefix = var.aws_cli_profile
+  bucket_prefix = var.s3_bucket_prefix
 }
 
 resource "aws_s3_bucket_public_access_block" "access_s3_bucket" {

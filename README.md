@@ -16,16 +16,17 @@ The project implements an HTTP-triggered AWS Lambda Function, which ingests even
 2. Run `terraform init`
 3. Check what terraform going to do with `terraform plan`
 4. Build infrastructure with `terraform apply`
+5. Get database password: `terraform output db_password`
 
 After successfully building terraform will output http endpoint url, you can visit it and see that everything built correctly. In addition, AWS S3 bucket name and AWS RDS database endpoint and credentials will be returned.
 
 ## Usage notes
 1. Call AWS Lambda function using the endpoint url.
 
-To call an AWS Lambda function using the AWS CLI with AWS_IAM authentication, you can use the aws lambda invoke command with the --cli-binary-format option set to raw-in-base64-out, which will return the response in base64 encoding. For example:
+To call an AWS Lambda function using the AWS CLI with AWS_IAM authentication, you can use the aws lambda invoke command:
 
 ```bash
-aws lambda invoke --function-name ingest_event --cli-binary-format raw-in-base64-out
+aws lambda invoke --function-name ingest_event response.json
 ```
 
 2. Check AWS S3 bucket for new file
