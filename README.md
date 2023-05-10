@@ -22,13 +22,15 @@ After successfully building terraform will output http endpoint url, you can vis
 
 ## Usage notes
 1. Call AWS Lambda function using the endpoint url.
+Since the ingestion function URL uses the AWS_IAM auth type, you must sign each HTTP request using AWS Signature Version 4 (SigV4). Tools such as awscurl, Postman, and AWS SigV4 Proxy offer built-in ways to sign your requests with SigV4. 
 
-To call an AWS Lambda function using the AWS CLI with AWS_IAM authentication, you can use the aws lambda invoke command:
+    Here is an example of using the [awscurl](https://github.com/okigan/awscurl) tool to invoke the function:
 
-```bash
-aws lambda invoke --function-name ingest_event response.json
-```
-
+    ```bash
+    pip install awscurl
+    
+    awscurl --service lambda --region <aws_region variable value from the variables.tf file> "<lambda_function_url from the terraform output>"
+    ```
 2. Check AWS S3 bucket for new file
 3. Check AWS RDS database for new record
 

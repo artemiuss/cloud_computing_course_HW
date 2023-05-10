@@ -17,5 +17,5 @@ variable "kinesis_stream" {
 variable "s3_bucket_prefix" {
   description = "S3 bucket to store data"
   type        = string
-  default     = "cloud_computing_course_hw"
+  default     = "cloudcomputingcoursehw"
 }
