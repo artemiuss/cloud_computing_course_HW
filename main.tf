@@ -55,8 +55,7 @@ resource "aws_lambda_function" "store_event" {
   role             = aws_iam_role.lambda_role.arn
 
   layers = [
-    aws_lambda_layer_version.lambda_psycopg2_layer.arn,
-    aws_secretsmanager_secret_version.rds_secret_version
+    aws_lambda_layer_version.lambda_psycopg2_layer.arn
   ]
 
   environment {
