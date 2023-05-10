@@ -35,3 +35,5 @@ terraform.rc
 
 # Other
 lambda-python-psycopg2-layer.zip
+.terraform.lock.hcl
+*.zip

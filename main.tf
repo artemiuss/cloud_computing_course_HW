@@ -31,7 +31,7 @@ data "archive_file" "store_event" {
 
 resource "aws_lambda_function" "ingest_event" {
   filename         = "ingest_event.zip"
-  function_name    = "aws_lambda_functions/ingest_event"
+  function_name    = "ingest_event"
   source_code_hash = data.archive_file.ingest_event.output_base64sha256
   handler          = "ingest_event.lambda_handler"
   runtime          = "python3.9"
@@ -47,7 +47,7 @@ resource "aws_lambda_function" "ingest_event" {
 
 resource "aws_lambda_function" "store_event" {
   filename         = "store_event.zip"
-  function_name    = "aws_lambda_functions/store_event"
+  function_name    = "store_event"
   source_code_hash = data.archive_file.store_event.output_base64sha256
   handler          = "store_event.lambda_handler"
   runtime          = "python3.9"
@@ -67,7 +67,7 @@ resource "aws_lambda_function" "store_event" {
   }
 
   vpc_config {
-    subnet_ids         = [aws_subnet.main_subnet.id]
+    subnet_ids         = [aws_subnet.main.id]
     security_group_ids = [aws_security_group.main_sg.id]
   }
 
@@ -130,7 +130,6 @@ resource "aws_lambda_event_source_mapping" "kinesis_to_s3_mapping" {
 #
 resource "aws_s3_bucket" "s3_bucket" {
   bucket_prefix = var.aws_cli_profile
-  acl    = "private"
 }
 
 resource "aws_s3_bucket_public_access_block" "access_s3_bucket" {
@@ -182,10 +181,6 @@ resource "aws_db_instance" "pg_db" {
   #publicly_accessible    = true
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.id
   vpc_security_group_ids = [aws_security_group.main_sg.id]
-
-  depends_on = [
-    aws_secretsmanager_secret_version.rds_secret_version
-  ]
 }
 
 #
