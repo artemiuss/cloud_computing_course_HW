@@ -36,7 +36,7 @@ resource "aws_lambda_function" "ingest_event" {
   handler          = "ingest_event.lambda_handler"
   runtime          = "python3.9"
   timeout          = 5
-  role             = aws_iam_role.aws_lambda_ingest_event_role.arn
+  role             = aws_iam_role.lambda_role.arn
 
   environment {
     variables = {
@@ -52,7 +52,7 @@ resource "aws_lambda_function" "store_event" {
   handler          = "store_event.lambda_handler"
   runtime          = "python3.9"
   timeout          = 5
-  role             = aws_iam_role.aws_lambda_store_event_role.arn
+  role             = aws_iam_role.lambda_role.arn
 
   layers = [
     aws_lambda_layer_version.lambda_psycopg2_layer.arn,
@@ -203,11 +203,12 @@ resource "aws_subnet" "main" {
 resource "aws_security_group" "main_sg" {
   name   = "main_sg"
   vpc_id = aws_vpc.main.id
+
   ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    self = true
+    self        = true
   }
 
   egress {
@@ -239,8 +240,8 @@ resource "aws_route_table" "main_rtb" {
 #
 # IAM
 #
-resource "aws_iam_role" "function_role" {
-  name = "${local.function_name}-${var.env_name}"
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda-vpc-execution-role"
 
   assume_role_policy = jsonencode({
     Statement = [
@@ -255,3 +256,32 @@ resource "aws_iam_role" "function_role" {
   })
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_role_policy_attachment" {
+    role       = aws_iam_role.lambda_role.name
+    policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_policy" "lambda_policy" {
+  name = "lambda_policy"
+
+  policy = jsonencode({
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:*",
+          "cloudwatch:*",
+          "kinesis:*",
+          "s3:*",
+          "ec2:*"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_role_policy_attachment_2" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
