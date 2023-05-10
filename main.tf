@@ -66,7 +66,7 @@ resource "aws_lambda_function" "store_event" {
   }
 
   vpc_config {
-    subnet_ids         = [aws_subnet.main.id]
+    subnet_ids         = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
     security_group_ids = [aws_security_group.main_sg.id]
   }
 
@@ -170,7 +170,7 @@ resource "aws_secretsmanager_secret_version" "rds_secret_version" {
 resource "aws_db_instance" "pg_db" {
   allocated_storage    = 10
   apply_immediately    = true
-  db_name              = "db"
+  db_name              = "hw_db"
   engine               = "postgres"
   instance_class       = "db.t3.micro"
   username             = "lambda"
@@ -189,9 +189,16 @@ resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_subnet" "main" {
+resource "aws_subnet" "subnet_1" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
+  availability_zone = "${var.aws_region}a"
+}
+
+resource "aws_subnet" "subnet_2" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "${var.aws_region}b"
 }
 
 resource "aws_security_group" "main_sg" {
@@ -215,7 +222,7 @@ resource "aws_security_group" "main_sg" {
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "main"
-  subnet_ids = [aws_subnet.main.id]
+  subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
 }
 
 resource "aws_internet_gateway" "main_ig" {
