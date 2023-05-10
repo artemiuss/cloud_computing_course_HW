@@ -13,6 +13,13 @@ The project implements an HTTP-triggered AWS Lambda Function, which ingests even
 
 ## Usage notes
 
+1. Clone this repository
+2. Run `terraform init`
+3. Check what terraform going to do with `terraform plan`
+4. Build infrastructure with `terraform apply`
 
+After successfully building terraform will output http endpoint url, you can visit it and see that everything built correctly. In addition, AWS S3 bucket name and AWS RDS database endpoint and credentials will be returned.
 
+## Cleanup
 
+Run `terraform destroy`

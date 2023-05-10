@@ -17,7 +17,6 @@ provider "aws" {
 #
 # Lambda
 #
-
 data "archive_file" "ingest_event" {
   type        = "zip"
   source_file = "aws_lambda_functions/ingest_event.py"
@@ -65,6 +64,11 @@ resource "aws_lambda_function" "store_event" {
       S3_BUCKET = aws_s3_bucket.s3_bucket.id
       SECRET_NAME = aws_secretsmanager_secret.rds_secret.name
     }
+  }
+
+  vpc_config {
+    subnet_ids         = [aws_subnet.main_subnet.id]
+    security_group_ids = [aws_security_group.main_sg.id]
   }
 
   depends_on = [
@@ -165,7 +169,6 @@ resource "aws_secretsmanager_secret_version" "rds_secret_version" {
 #
 # RDS
 #
-
 resource "aws_db_instance" "pg_db" {
   allocated_storage    = 10
   apply_immediately    = true
@@ -177,16 +180,61 @@ resource "aws_db_instance" "pg_db" {
   skip_final_snapshot  = true
 
   #publicly_accessible    = true
-  #db_subnet_group_name   = 
-  #vpc_security_group_ids = 
+  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.id
+  vpc_security_group_ids = [aws_security_group.main_sg.id]
+
   depends_on = [
     aws_secretsmanager_secret_version.rds_secret_version
   ]
 }
 
 #
-# VPС
+# Neteorking
 #
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "main" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+}
+
+resource "aws_security_group" "main_sg" {
+  name   = "main_sg"
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    self = true
+  }
+
+  egress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_db_subnet_group" "db_subnet_group" {
+  name       = "main"
+  subnet_ids = [aws_subnet.main.id]
+}
+
+resource "aws_internet_gateway" "main_ig" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route_table" "main_rtb" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main_ig.id
+  }
+}
 
 #
 # IAM
