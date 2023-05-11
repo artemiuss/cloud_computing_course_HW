@@ -25,7 +25,7 @@ def lambda_handler(event, context):
 
     print("Connecting to database")
     try:
-        conn = psycopg2.connect(user=username, password=password, host=host, port=int(port), database=dbname, connect_timeout=5)
+        conn = psycopg2.connect(user=username, password=password, host=host, port=int(port), database=dbname)
     except Exception as e:
         print("Unable to connect to database")
         print(e)
@@ -35,17 +35,23 @@ def lambda_handler(event, context):
             'body': 'Unable to connect to database'
         }
     cur = conn.cursor()
+    print("CREATE TABLE events")
     cur.execute("CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY, event JSON NOT NULL, ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
     print("Processing records")
     for record in event['Records']:
         payload = base64.b64decode(record["kinesis"]["data"]).decode("utf-8")
+        print(f"payload: {payload}")
         payload_json = json.loads(payload)
+        print(f"payload_json: {payload_json}")
         requestId = payload_json['requestContext']['requestId']
+        print(f"requestId: {requestId}")
 
-        s3_client.put_object(Bucket= s3_bucket, Key=requestId + '.json', Body=payload_json)
+        print("S3 put object")
+        s3_client.put_object(Bucket= s3_bucket, Key=requestId + '.json', Body=payload)
 
-        cur.execute("INSERT INTO events (event, ts) VALUES (%s)", (payload_json))
+        print("DB insert record")
+        cur.execute("INSERT INTO events (event, ts) VALUES (%s)", (payload))
 
     conn.commit()
     cur.close()

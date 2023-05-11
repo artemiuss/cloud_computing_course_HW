@@ -51,7 +51,7 @@ resource "aws_lambda_function" "store_event" {
   source_code_hash = data.archive_file.store_event.output_base64sha256
   handler          = "store_event.lambda_handler"
   runtime          = "python3.9"
-  timeout          = 10
+  timeout          = 20
   role             = aws_iam_role.lambda_role.arn
 
   layers = [
