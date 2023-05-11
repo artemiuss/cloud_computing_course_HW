@@ -23,10 +23,16 @@ data "archive_file" "ingest_event" {
   output_path = "aws_lambda_functions/ingest_event.zip"
 }
 
-data "archive_file" "store_event" {
+data "archive_file" "store_event_to_s3" {
   type        = "zip"
-  source_file = "aws_lambda_functions/store_event.py"
-  output_path = "aws_lambda_functions/store_event.zip"
+  source_file = "aws_lambda_functions/store_event_to_s3.py"
+  output_path = "aws_lambda_functions/store_event_to_s3.zip"
+}
+
+data "archive_file" "store_event_to_db" {
+  type        = "zip"
+  source_file = "aws_lambda_functions/store_event_to_db.py"
+  output_path = "aws_lambda_functions/store_event_to_db.zip"
 }
 
 resource "aws_lambda_function" "ingest_event" {
@@ -45,11 +51,36 @@ resource "aws_lambda_function" "ingest_event" {
   }
 }
 
-resource "aws_lambda_function" "store_event" {
-  filename         = "aws_lambda_functions/store_event.zip"
-  function_name    = "store_event"
-  source_code_hash = data.archive_file.store_event.output_base64sha256
-  handler          = "store_event.lambda_handler"
+resource "aws_lambda_function_url" "lambda_url" {
+  function_name      = aws_lambda_function.ingest_event.function_name
+  authorization_type = "AWS_IAM"
+}
+
+resource "aws_lambda_function" "store_event_to_s3" {
+  filename         = "aws_lambda_functions/store_event_to_s3.zip"
+  function_name    = "store_event_to_s3"
+  source_code_hash = data.archive_file.store_event_to_s3.output_base64sha256
+  handler          = "store_event_to_s3.lambda_handler"
+  runtime          = "python3.9"
+  timeout          = 20
+  role             = aws_iam_role.lambda_role.arn
+
+  environment {
+    variables = {
+      S3_BUCKET = aws_s3_bucket.s3_bucket.id
+    }
+  }
+
+  depends_on = [
+    aws_s3_bucket.s3_bucket
+  ]
+}
+
+resource "aws_lambda_function" "store_event_to_db" {
+  filename         = "aws_lambda_functions/store_event_to_db.zip"
+  function_name    = "store_event_to_db"
+  source_code_hash = data.archive_file.store_event_to_db.output_base64sha256
+  handler          = "store_event_to_db.lambda_handler"
   runtime          = "python3.9"
   timeout          = 20
   role             = aws_iam_role.lambda_role.arn
@@ -60,7 +91,6 @@ resource "aws_lambda_function" "store_event" {
 
   environment {
     variables = {
-      S3_BUCKET = aws_s3_bucket.s3_bucket.id
       #SECRET_NAME = aws_secretsmanager_secret.rds_secret.name
       USERNAME = aws_db_instance.pg_db.username
       PASSWORD = aws_db_instance.pg_db.password
@@ -76,14 +106,10 @@ resource "aws_lambda_function" "store_event" {
 
   depends_on = [
     aws_lambda_layer_version.lambda_psycopg2_layer,
-    aws_s3_bucket.s3_bucket,
     aws_db_instance.pg_db
   ]
 }
 
-#
-# Lambda Layers
-#
 data "archive_file" "lambda_psycopg2_layer_archive" {
   type        = "zip"
   source_dir  = "layers/psycopg2"
@@ -93,14 +119,6 @@ data "archive_file" "lambda_psycopg2_layer_archive" {
 resource "aws_lambda_layer_version" "lambda_psycopg2_layer" {
   filename   = data.archive_file.lambda_psycopg2_layer_archive.output_path
   layer_name = "lambda_psycopg2_layer"
-}
-
-#
-# Lambda URL
-#
-resource "aws_lambda_function_url" "lambda_url" {
-  function_name      = aws_lambda_function.ingest_event.function_name
-  authorization_type = "AWS_IAM"
 }
 
 #
@@ -116,15 +134,27 @@ resource "aws_kinesis_stream" "kinesis_stream" {
   }
 }
 
-resource "aws_lambda_function_event_invoke_config" "kinesis_trigger" {
-  function_name                = aws_lambda_function.store_event.function_name
+resource "aws_lambda_function_event_invoke_config" "kinesis_trigger_s3" {
+  function_name                = aws_lambda_function.store_event_to_s3.function_name
   maximum_event_age_in_seconds = 60
   maximum_retry_attempts       = 0
 }
 
 resource "aws_lambda_event_source_mapping" "kinesis_to_s3_mapping" {
   event_source_arn  = aws_kinesis_stream.kinesis_stream.arn
-  function_name     = aws_lambda_function.store_event.arn
+  function_name     = aws_lambda_function.store_event_to_s3.arn
+  starting_position = "LATEST"
+}
+
+resource "aws_lambda_function_event_invoke_config" "kinesis_trigger_db" {
+  function_name                = aws_lambda_function.store_event_to_db.function_name
+  maximum_event_age_in_seconds = 60
+  maximum_retry_attempts       = 0
+}
+
+resource "aws_lambda_event_source_mapping" "kinesis_to_db_mapping" {
+  event_source_arn  = aws_kinesis_stream.kinesis_stream.arn
+  function_name     = aws_lambda_function.store_event_to_db.arn
   starting_position = "LATEST"
 }
 
@@ -187,7 +217,7 @@ resource "aws_db_instance" "pg_db" {
 }
 
 #
-# Neteorking
+# Networking
 #
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
