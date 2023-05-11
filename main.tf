@@ -65,7 +65,7 @@ resource "aws_lambda_function" "store_event" {
       USERNAME = aws_db_instance.pg_db.username
       PASSWORD = aws_db_instance.pg_db.password
       ENDPOINT = aws_db_instance.pg_db.endpoint
-      DB       = aws_db_instance.pg_db.id
+      DB       = aws_db_instance.pg_db.db_name
     }
   }
 
@@ -183,7 +183,7 @@ resource "aws_db_instance" "pg_db" {
 
   #publicly_accessible    = true
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.id
-  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  vpc_security_group_ids = [aws_security_group.lambda_sg.id]
 }
 
 #
@@ -205,47 +205,30 @@ resource "aws_subnet" "subnet_2" {
   availability_zone = "${var.aws_region}b"
 }
 
-resource "aws_security_group" "db_sg" {
-  name   = "db_sg"
+resource "aws_security_group" "lambda_sg" {
+  name   = "lambda_sg"
+  description = "Security group for AWS lambda and AWS RDS connection"
   vpc_id = aws_vpc.main.id
 
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    self        = true
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["127.0.0.1/32"]
+    self = true
   }
 
   egress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
   }
-}
-
-# Create a Security Group for the Lambda function
-resource "aws_security_group" "lambda_sg" {
-  name_prefix = "lambda_sg"
-  vpc_id = aws_vpc.main.id
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "main"
   subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
-}
-
-resource "aws_internet_gateway" "main_ig" {
-  vpc_id = aws_vpc.main.id
-}
-
-resource "aws_route_table" "main_rtb" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main_ig.id
-  }
 }
 
 #

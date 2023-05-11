@@ -17,15 +17,23 @@ def lambda_handler(event, context):
 
     username = os.environ['USERNAME']
     password = os.environ['PASSWORD']
-    host = os.environ['ENDPOINT'].split(":")[0]
-    port = os.environ['ENDPOINT'].split(":")[1]
+    host, port= os.environ['ENDPOINT'].split(":")
     dbname = os.environ['DB']
 
     print("Connecting to S3")
     s3_client = boto3.client('s3')
 
     print("Connecting to database")
-    conn = psycopg2.connect(user=username, password=password, host=host, port=int(port), database=dbname)
+    try:
+        conn = psycopg2.connect(user=username, password=password, host=host, port=int(port), database=dbname, connect_timeout=5)
+    except Exception as e:
+        print("Unable to connect to database")
+        print(e)
+        return {
+            'statusCode': 500,
+            'headers': {"Content-Type": "application/json"},
+            'body': 'Unable to connect to database'
+        }
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY, event JSON NOT NULL, ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
