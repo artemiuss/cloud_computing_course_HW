@@ -61,13 +61,17 @@ resource "aws_lambda_function" "store_event" {
   environment {
     variables = {
       S3_BUCKET = aws_s3_bucket.s3_bucket.id
-      SECRET_NAME = aws_secretsmanager_secret.rds_secret.name
+      #SECRET_NAME = aws_secretsmanager_secret.rds_secret.name
+      USERNAME = aws_db_instance.pg_db.username
+      PASSWORD = aws_db_instance.pg_db.password
+      ENDPOINT = aws_db_instance.pg_db.endpoint
+      DB       = aws_db_instance.pg_db.id
     }
   }
 
   vpc_config {
     subnet_ids         = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
-    security_group_ids = [aws_security_group.main_sg.id]
+    security_group_ids = [aws_security_group.lambda_sg.id]
   }
 
   depends_on = [
@@ -179,7 +183,7 @@ resource "aws_db_instance" "pg_db" {
 
   #publicly_accessible    = true
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.id
-  vpc_security_group_ids = [aws_security_group.main_sg.id]
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
 }
 
 #
@@ -201,8 +205,8 @@ resource "aws_subnet" "subnet_2" {
   availability_zone = "${var.aws_region}b"
 }
 
-resource "aws_security_group" "main_sg" {
-  name   = "main_sg"
+resource "aws_security_group" "db_sg" {
+  name   = "db_sg"
   vpc_id = aws_vpc.main.id
 
   ingress {
@@ -218,6 +222,12 @@ resource "aws_security_group" "main_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+# Create a Security Group for the Lambda function
+resource "aws_security_group" "lambda_sg" {
+  name_prefix = "lambda_sg"
+  vpc_id = aws_vpc.main.id
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
@@ -276,7 +286,8 @@ resource "aws_iam_policy" "lambda_policy" {
           "cloudwatch:*",
           "kinesis:*",
           "s3:*",
-          "ec2:*"
+          "ec2:*",
+          "secretsmanager:*"
         ]
         Resource = "*"
       }
