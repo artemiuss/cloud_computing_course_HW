@@ -1,6 +1,7 @@
 import os
 import logging
 import base64
+import json
 import psycopg2
 
 logger = logging.getLogger()
@@ -29,7 +30,7 @@ def lambda_handler(event, context):
         print(f"payload: {payload}")
 
         print("DB insert record")
-        cur.execute("INSERT INTO events (event, ts) VALUES (%s)", (payload))
+        cur.execute("INSERT INTO events (event) VALUES (%s)", (payload,))
 
     conn.commit()
     cur.close()

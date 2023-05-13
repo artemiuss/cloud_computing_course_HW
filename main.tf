@@ -210,8 +210,7 @@ resource "aws_db_instance" "pg_db" {
   username             = "lambda"
   password             = random_password.db_password.result
   skip_final_snapshot  = true
-
-  #publicly_accessible    = true
+  publicly_accessible  = true
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.id
   vpc_security_group_ids = [aws_security_group.lambda_sg.id]
 }
@@ -221,6 +220,8 @@ resource "aws_db_instance" "pg_db" {
 #
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
 resource "aws_subnet" "subnet_1" {
@@ -240,25 +241,39 @@ resource "aws_security_group" "lambda_sg" {
   description = "Security group for AWS lambda and AWS RDS connection"
   vpc_id = aws_vpc.main.id
 
+  # Only postgres in
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["127.0.0.1/32"]
-    self = true
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow all outbound traffic.
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "main"
   subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
+}
+
+resource "aws_internet_gateway" "main_ig" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route_table" "main_rtb" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main_ig.id
+  }
 }
 
 #
