@@ -72,6 +72,7 @@ resource "aws_lambda_function" "store_event_to_s3" {
   }
 
   depends_on = [
+    aws_kinesis_stream.kinesis_stream,
     aws_s3_bucket.s3_bucket
   ]
 }
@@ -97,11 +98,6 @@ resource "aws_lambda_function" "store_event_to_db" {
       ENDPOINT = aws_db_instance.pg_db.endpoint
       DB       = aws_db_instance.pg_db.db_name
     }
-  }
-
-  vpc_config {
-    subnet_ids         = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
-    security_group_ids = [aws_security_group.lambda_sg.id]
   }
 
   depends_on = [
@@ -212,7 +208,7 @@ resource "aws_db_instance" "pg_db" {
   skip_final_snapshot  = true
   publicly_accessible  = true
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.id
-  vpc_security_group_ids = [aws_security_group.lambda_sg.id]
+  vpc_security_group_ids = [aws_security_group.main_sg.id]
 }
 
 #
@@ -236,8 +232,8 @@ resource "aws_subnet" "subnet_2" {
   availability_zone = "${var.aws_region}b"
 }
 
-resource "aws_security_group" "lambda_sg" {
-  name   = "lambda_sg"
+resource "aws_security_group" "main_sg" {
+  name   = "main_sg"
   description = "Security group for AWS lambda and AWS RDS connection"
   vpc_id = aws_vpc.main.id
 
@@ -270,10 +266,26 @@ resource "aws_internet_gateway" "main_ig" {
 resource "aws_route_table" "main_rtb" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main_ig.id
-  }
+  #route {
+  #  cidr_block = "0.0.0.0/0"
+  #  gateway_id = aws_internet_gateway.main_ig.id
+  #}
+}
+
+resource "aws_route" "public_internet_gateway" {
+  route_table_id         = aws_route_table.main_rtb.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.main_ig.id
+}
+
+resource "aws_route_table_association" "public1" {
+  subnet_id      = aws_subnet.subnet_1.id
+  route_table_id = aws_route_table.main_rtb.id
+}
+
+resource "aws_route_table_association" "public2" {
+  subnet_id      = aws_subnet.subnet_2.id
+  route_table_id = aws_route_table.main_rtb.id
 }
 
 #
