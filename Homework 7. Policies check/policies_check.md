@@ -32,7 +32,7 @@ The full result of the scan can be found in the `init_scan_result.log` file.
 
 ### The checks fixed
 
-<table style="font-size: 10px;">
+<table>
 <tr>
 <th>Before</th>
 <th>After</th>
@@ -40,8 +40,7 @@ The full result of the scan can be found in the `init_scan_result.log` file.
 <tr>
 <td>
 
-```
-Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
+<pre>Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
 	FAILED for resource: aws_lambda_function.ingest_event
 	File: /main.tf:38-52
 	Guide: https://docs.bridgecrew.io/docs/ensure-that-aws-lambda-function-is-configured-for-a-dead-letter-queue-dlq
@@ -61,22 +60,22 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 		50 |     }
 		51 |   }
 		52 | }
-```
+</pre>
 </td>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
 	PASSED for resource: aws_lambda_function.ingest_event
 	File: /main.tf:42-64
 	Guide: https://docs.bridgecrew.io/docs/ensure-that-aws-lambda-function-is-configured-for-a-dead-letter-queue-dlq
-```
+</pre>
 </td>
 </tr>
 <tr>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
 	FAILED for resource: aws_lambda_function.store_event_to_s3
 	File: /main.tf:59-78
@@ -102,22 +101,22 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 		76 |     aws_s3_bucket.s3_bucket
 		77 |   ]
 		78 | }
-```
+</pre>
 </td>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
 	PASSED for resource: aws_lambda_function.store_event_to_s3
 	File: /main.tf:75-102
 	Guide: https://docs.bridgecrew.io/docs/ensure-that-aws-lambda-function-is-configured-for-a-dead-letter-queue-dlq
-```
+</pre>
 </td>
 </tr>
 <tr>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
 	FAILED for resource: aws_lambda_function.store_event_to_db
 	File: /main.tf:80-107
@@ -151,22 +150,22 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 		105 |     aws_db_instance.pg_db
 		106 |   ]
 		107 | }		
-```
+</pre>
 </td>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
 	PASSED for resource: aws_lambda_function.store_event_to_db
 	File: /main.tf:108-143
 	Guide: https://docs.bridgecrew.io/docs/ensure-that-aws-lambda-function-is-configured-for-a-dead-letter-queue-dlq
-```
+</pre>
 </td>
 </tr>
 <tr>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 	FAILED for resource: aws_lambda_function.ingest_event
 	File: /main.tf:38-52
@@ -187,22 +186,22 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 		50 |     }
 		51 |   }
 		52 | }
-```
+</pre>
 </td>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 	PASSED for resource: aws_lambda_function.ingest_event
 	File: /main.tf:42-64
 	Guide: https://docs.bridgecrew.io/docs/bc_aws_serverless_4
-```
+</pre>
 </td>
 </tr>
 <tr>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 	FAILED for resource: aws_lambda_function.store_event_to_s3
 	File: /main.tf:59-78
@@ -228,22 +227,22 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 		76 |     aws_s3_bucket.s3_bucket
 		77 |   ]
 		78 | }
-```
+</pre>
 </td>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 	PASSED for resource: aws_lambda_function.store_event_to_s3
 	File: /main.tf:75-102
 	Guide: https://docs.bridgecrew.io/docs/bc_aws_serverless_4
-```
+</pre>
 </td>
 </tr>
 <tr>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 	FAILED for resource: aws_lambda_function.store_event_to_db
 	File: /main.tf:80-107
@@ -277,16 +276,16 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 		105 |     aws_db_instance.pg_db
 		106 |   ]
 		107 | }		
-```
+</pre>
 </td>
 <td>
 
-```
+<pre>
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 	PASSED for resource: aws_lambda_function.store_event_to_db
 	File: /main.tf:108-143
 	Guide: https://docs.bridgecrew.io/docs/bc_aws_serverless_4	
-```
+</pre>
 </td>
 </tr>
 
