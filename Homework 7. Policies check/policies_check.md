@@ -32,13 +32,7 @@ The full result of the scan can be found in the `init_scan_result.log` file.
 
 ### The checks fixed
 
-<style scoped>
-table {
-  font-size: 10px;
-}
-</style>
-
-<table>
+<table style="font-size: 10px;">
 <tr>
 <th>Before</th>
 <th>After</th>
