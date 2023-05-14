@@ -35,6 +35,10 @@ data "archive_file" "store_event_to_db" {
   output_path = "aws_lambda_functions/store_event_to_db.zip"
 }
 
+resource "aws_sqs_queue" "ingest_event_dlq" {
+  name = "ingest_event_dlq"
+}
+
 resource "aws_lambda_function" "ingest_event" {
   filename         = "aws_lambda_functions/ingest_event.zip"
   function_name    = "ingest_event"
@@ -43,6 +47,14 @@ resource "aws_lambda_function" "ingest_event" {
   runtime          = "python3.9"
   timeout          = 5
   role             = aws_iam_role.lambda_role.arn
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.ingest_event_dlq.arn
+  }
+
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {
@@ -56,6 +68,10 @@ resource "aws_lambda_function_url" "lambda_url" {
   authorization_type = "AWS_IAM"
 }
 
+resource "aws_sqs_queue" "store_event_to_s3_dlq" {
+  name = "store_event_to_s3_dlq"
+}
+
 resource "aws_lambda_function" "store_event_to_s3" {
   filename         = "aws_lambda_functions/store_event_to_s3.zip"
   function_name    = "store_event_to_s3"
@@ -64,6 +80,14 @@ resource "aws_lambda_function" "store_event_to_s3" {
   runtime          = "python3.9"
   timeout          = 20
   role             = aws_iam_role.lambda_role.arn
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.store_event_to_s3_dlq.arn
+  }
+
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {
@@ -77,6 +101,10 @@ resource "aws_lambda_function" "store_event_to_s3" {
   ]
 }
 
+resource "aws_sqs_queue" "store_event_to_db_dlq" {
+  name = "store_event_to_db_dlq"
+}
+
 resource "aws_lambda_function" "store_event_to_db" {
   filename         = "aws_lambda_functions/store_event_to_db.zip"
   function_name    = "store_event_to_db"
@@ -85,6 +113,14 @@ resource "aws_lambda_function" "store_event_to_db" {
   runtime          = "python3.9"
   timeout          = 20
   role             = aws_iam_role.lambda_role.arn
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.store_event_to_db_dlq.arn
+  }
+
+  tracing_config {
+    mode = "Active"
+  }
 
   layers = [
     aws_lambda_layer_version.lambda_psycopg2_layer.arn
