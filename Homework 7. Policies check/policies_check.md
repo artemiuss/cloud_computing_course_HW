@@ -32,7 +32,7 @@ The full result of the scan can be found in the `init_scan_result.log` file.
 
 ### The checks fixed
 
-<table>
+<table style="width:100%">
 <tr>
 <th>Before</th>
 <th>After</th>
