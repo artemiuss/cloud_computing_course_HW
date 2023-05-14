@@ -31,8 +31,13 @@ Passed checks: 34, Failed checks: 49, Skipped checks: 0
 The full result of the scan can be found in the `init_scan_result.log` file.
 
 ### The checks fixed
+<style scoped>
+table {
+  font-size: 10px;
+}
+</style>
 
-<table style="width:100%" size="sm">
+<table>
 <tr>
 <th>Before</th>
 <th>After</th>
