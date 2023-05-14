@@ -38,7 +38,7 @@ The full result of the scan can be found in the `init_scan_result.log` file.
 <th>After</th>
 </tr>
 <tr>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
@@ -63,7 +63,7 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 		52 | }
 ```
 </td>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
@@ -74,7 +74,7 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 </td>
 </tr>
 <tr>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
@@ -104,7 +104,7 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 		78 | }
 ```
 </td>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
@@ -115,7 +115,7 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 </td>
 </tr>
 <tr>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
@@ -153,7 +153,7 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 		107 | }		
 ```
 </td>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)"
@@ -164,7 +164,7 @@ Check: CKV_AWS_116: "Ensure that AWS Lambda function is configured for a Dead Le
 </td>
 </tr>
 <tr>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
@@ -189,7 +189,7 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 		52 | }
 ```
 </td>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
@@ -200,7 +200,7 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 </td>
 </tr>
 <tr>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
@@ -230,7 +230,7 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 		78 | }
 ```
 </td>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
@@ -241,7 +241,7 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 </td>
 </tr>
 <tr>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
@@ -279,7 +279,7 @@ Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
 		107 | }		
 ```
 </td>
-<td NOWRAP>
+<td style="white-space: nowrap;">
 
 ```
 Check: CKV_AWS_50: "X-ray tracing is enabled for Lambda"
