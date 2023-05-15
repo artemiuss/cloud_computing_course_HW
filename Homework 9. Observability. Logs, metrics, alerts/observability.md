@@ -15,7 +15,7 @@
 3. Get the *store_event* function log records for given *ingestionTime*
 ![](3_get_store_event_to_db_log.png)
 
-4. Do 2 and 3 steps for the *store_event_to_s3* function:
+4. Do 2 and 3 steps for the *store_event_to_s3* function
 ![](4_get_store_event_to_s3_ingestionTime.png)
 ![](5_get_store_event_to_s3_log.png)
 
