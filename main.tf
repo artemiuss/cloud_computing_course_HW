@@ -363,7 +363,8 @@ resource "aws_iam_policy" "lambda_policy" {
           "kinesis:*",
           "s3:*",
           "ec2:*",
-          "secretsmanager:*"
+          "secretsmanager:*",
+          "sqs:*"
         ]
         Resource = "*"
       }
