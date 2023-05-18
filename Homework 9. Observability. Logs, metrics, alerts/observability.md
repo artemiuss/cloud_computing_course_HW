@@ -25,11 +25,14 @@
 
 ### Find built-in metrics that might help you to understand Event Stream performance
 
-...
+    ![](func_average execution time.png)
 
 ### Compare average execution time of functions that read from Event Stream
 
-...
+    ![](func_average execution time.png)
+
+
+
 
 
 
