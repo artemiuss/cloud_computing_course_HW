@@ -26,7 +26,9 @@
 
 ### Find built-in metrics that might help you to understand Event Stream performance
 
-...
+This task can be solved using Kinesis Data Streams Dimensions and Metrics in CloudWatch: [Monitoring the Amazon Kinesis Data Streams Service with Amazon CloudWatch](https://docs.aws.amazon.com/streams/latest/dev/monitoring-with-cloudwatch.html)
+
+![](event_stream_performance_metrics.png)
 
 ### Compare average execution time of functions that read from Event Stream
 
