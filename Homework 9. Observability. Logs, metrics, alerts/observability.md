@@ -22,14 +22,18 @@
 
     ![](4_get_store_event_to_s3_ingestionTime.png)
     ![](5_get_store_event_to_s3_log.png)
+    
 
 ### Find built-in metrics that might help you to understand Event Stream performance
 
-    ![](func_average execution time.png)
+...
 
 ### Compare average execution time of functions that read from Event Stream
 
-    ![](func_average execution time.png)
+This task can be solved using [CloudWatch console metrics](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-metrics.html)
+
+![](func_average_execution_time.png)
+
 
 
 
