@@ -25,8 +25,12 @@
 
 ### Find built-in metrics that might help you to understand Event Stream performance
 
+...
 
 ### Compare average execution time of functions that read from Event Stream
+
+...
+
 
 
 
